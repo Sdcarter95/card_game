@@ -14,6 +14,8 @@ const io = new Server(server);
 
 // Keep track of connected players
 const connectedPlayers: Set<string> = new Set();
+let turnCounter: number = 0;
+let roundResult: string = "";
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -28,8 +30,8 @@ io.on('connection', async (socket) => {
 
 
   if (connectedPlayers.size == 2) {
-    const newGameAlert = await newGame();
-    io.emit('gameStart', newGameAlert);
+    await newGame();
+    io.emit('gameStart', "Draw to begin");
   } else {
     socket.emit('waitingForPlayers', 'Waiting for more players to join...');
   }
@@ -38,8 +40,42 @@ io.on('connection', async (socket) => {
   socket.on('nextRound', async () => {
     if (connectedPlayers.size >= 2) {
       // Handle the logic for the next round and broadcast the result to all clients
-      const roundResult = await nextRound();
-      io.emit('roundResult', roundResult); // Broadcast the result to all clients
+      if(turnCounter == 0){
+        roundResult = await nextRound(); //start of a new round
+      }
+
+      //sort results
+      const finalResult = roundResult.split("|r|")[1];
+      const roundInfo = roundResult.split("|r|")[0];
+      const roundNumber = roundInfo.split("|c|")[0];
+      const player1Result = roundInfo.split("|c|")[1];
+      const player2Result = roundInfo.split("|c|")[2];
+
+
+
+      if (turnCounter == 0){
+        io.emit("roundResult", "");
+        io.emit("opponentResult", "");
+        io.emit("drawResult", "");
+        io.emit("roundNumber", roundNumber);
+      }
+      //if a player draws a card before another, they can only see their own card and not the result of the match.
+      if (turnCounter < 2) {
+        turnCounter++;
+        if ([...connectedPlayers][0] === socket.id) { //player 1
+          socket.emit('drawResult', player1Result)
+          io.to([...connectedPlayers][1]).emit('opponentResult', player1Result);
+        } else { //player 2
+          socket.emit('drawResult', player2Result); 
+          io.to([...connectedPlayers][0]).emit('opponentResult', player2Result);
+        }
+
+      } 
+      if (turnCounter >= 2) { // if both players have played, the results will be displayed. 
+        turnCounter = 0;
+        io.emit('roundResult', finalResult); // Broadcast the result to all clients
+      }
+
     } else {
       socket.emit('waitingForPlayers', 'Waiting for more players to join...');
     }
@@ -70,7 +106,7 @@ app.get('/newGame', async (req, res) => {
 
 app.get('/nextRound', async (req, res) => {
   try {
-    const response = await nextRound();
+    const response = "await nextRound()";
     res.json(response);
   } catch (error) {
     res.status(500).json({ error: 'Failed to play next Rounds' });

@@ -27,7 +27,7 @@ function playWarRound(deckId) {
     return __asyncGenerator(this, arguments, function* playWarRound_1() {
         const player1 = { name: "Player 1", deck: [] };
         const player2 = { name: "Player 2", deck: [] };
-        let round = 0;
+        let round = -1;
         while (true) {
             round++;
             const card1 = yield __await((0, server_2.drawCard)(deckId));
@@ -37,30 +37,33 @@ function playWarRound(deckId) {
                 yield yield __await('Not enough cards in the deck to continue the game.');
                 return yield __await(void 0);
             }
+            //text is encoded:
+            // |c| = card values
+            // |r| = result
             roundResults += `Round ${round}:`;
-            roundResults += `${player1.name}: ${card1.value} of ${card1.suit}`;
-            roundResults += `${player2.name}: ${card2.value} of ${card2.suit}`;
+            roundResults += `|c|${player1.name}: ${card1.value} of ${card1.suit}`;
+            roundResults += `|c|${player2.name}: ${card2.value} of ${card2.suit}`;
             if (card1.value > card2.value) {
-                roundResults += `${player1.name} wins the round!`;
+                roundResults += `|r|${player1.name} wins the round!`;
                 player1.deck.push(card1, card2);
             }
             else if (card2.value > card1.value) {
-                roundResults += `${player2.name} wins the round!`;
+                roundResults += `|r|${player2.name} wins the round!`;
                 player2.deck.push(card1, card2);
             }
             else {
-                roundResults += "It's a tie!";
+                roundResults += "|r|It's a tie!";
             }
             if (round >= 100) {
-                roundResults += "Game Over";
+                roundResults += "|r|Game Over";
                 if (player1.deck.length > player2.deck.length) {
-                    roundResults += `${player1.name} wins the game!`;
+                    roundResults += `|r|${player1.name} wins the game!`;
                 }
                 else if (player2.deck.length > player1.deck.length) {
-                    roundResults += `${player2.name} wins the game!`;
+                    roundResults += `|r|${player2.name} wins the game!`;
                 }
                 else {
-                    roundResults += "It's a tie!";
+                    roundResults += "|r|It's a tie!";
                 }
                 yield yield __await(roundResults);
                 return yield __await(void 0);

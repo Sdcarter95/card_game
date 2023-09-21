@@ -1,23 +1,6 @@
 const backendURL = "http://localhost:3001"; // Change the URL to match your backend server's address
 
 
-enum Suit {
-    Hearts = "hearts",
-    Diamonds = "diamonds",
-    Clubs = "clubs",
-    Spades = "spades",
-  }
-  
-  type Card = {
-    value: string;
-    suit: Suit;
-  };
-  
-  type Player = {
-    name: string;
-    deck: Card[];
-  };
-
 export async function newGame(): Promise<string> {
   try {
     const response = await fetch(`${backendURL}/newGame` );

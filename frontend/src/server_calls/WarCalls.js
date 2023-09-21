@@ -11,13 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.nextRound = exports.newGame = void 0;
 const backendURL = "http://localhost:3001"; // Change the URL to match your backend server's address
-var Suit;
-(function (Suit) {
-    Suit["Hearts"] = "hearts";
-    Suit["Diamonds"] = "diamonds";
-    Suit["Clubs"] = "clubs";
-    Suit["Spades"] = "spades";
-})(Suit || (Suit = {}));
 function newGame() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
