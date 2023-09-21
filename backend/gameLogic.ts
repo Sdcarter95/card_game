@@ -20,8 +20,6 @@ type Player = {
 
 let roundGenerator: any;
 
-
-
 async function* playWarRound(deckId: string): AsyncGenerator<string, void, unknown> {
   const player1: Player = { name: "Player 1", deck: [] };
   const player2: Player = { name: "Player 2", deck: [] };
@@ -38,7 +36,7 @@ async function* playWarRound(deckId: string): AsyncGenerator<string, void, unkno
       return;
     }
 
-    //text is encoded:
+    // Text is encoded:
     // |c| = card values
     // |r| = result
     roundResults += `Round ${round}:`;
@@ -83,21 +81,16 @@ export async function newGame(): Promise<string> {
     const firstMessage = await roundGenerator.next();
 
     return firstMessage.value;
-
   } catch (error) {
     throw new Error('Failed to start a new game.');
   }
 }
 
-
 export async function nextRound(): Promise<string> {
-
   const roundMessage = await roundGenerator.next();
   if (roundMessage.done) {
     return "This game is over";
   } else {
     return roundMessage.value;
   }
-
 }
-

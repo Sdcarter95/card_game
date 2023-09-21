@@ -1,4 +1,4 @@
-const backendURL = "http://localhost:3001"; // Change the URL to match your backend server's address
+const backendURL = "http://localhost:3001"; 
 
 
 export async function newGame(): Promise<string> {

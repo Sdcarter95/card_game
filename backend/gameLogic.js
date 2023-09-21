@@ -37,7 +37,7 @@ function playWarRound(deckId) {
                 yield yield __await('Not enough cards in the deck to continue the game.');
                 return yield __await(void 0);
             }
-            //text is encoded:
+            // Text is encoded:
             // |c| = card values
             // |r| = result
             roundResults += `Round ${round}:`;

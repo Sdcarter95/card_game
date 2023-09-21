@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.nextRound = exports.newGame = void 0;
-const backendURL = "http://localhost:3001"; // Change the URL to match your backend server's address
+const backendURL = "http://localhost:3001";
 function newGame() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
