@@ -24,31 +24,32 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_1 = __importStar(require("react"));
-const WarCalls_1 = require("../server_calls/WarCalls");
+const socket_io_client_1 = require("socket.io-client");
+const socket = (0, socket_io_client_1.io)('http://localhost:3001', { transports: ['websocket', 'polling', 'flashsocket'] }); // Connect to the WebSocket server
 function HomePage() {
     const [gameMessage, setGameMessage] = (0, react_1.useState)("Ready to play");
     (0, react_1.useEffect)(() => {
-        startGame();
+        // Listen for "endGame" event from the server
+        socket.on('endGame', (message) => {
+            setGameMessage(message);
+        });
+        //startGame();
     }, []);
-    const startGame = () => {
-        (0, WarCalls_1.newGame)()
-            .then((response) => {
-            setGameMessage(response);
-        })
-            .catch((error) => {
-            console.error("Error starting the game:", error);
-            setGameMessage(error);
-        });
-    };
     const playRound = () => {
-        (0, WarCalls_1.nextRound)().then((response) => {
-            setGameMessage(response);
-        })
-            .catch((error) => {
-            console.error("Error playing round:", error);
-            setGameMessage(error);
-        });
+        socket.emit('nextRound');
     };
+    // Listen for "waitingForPlayers" event from the server
+    socket.on('waitingForPlayers', (message) => {
+        setGameMessage(message); // Display the waiting message
+    });
+    // Listen for "roundResult" events from the server
+    socket.on('roundResult', (result) => {
+        setGameMessage(result); // Update the game message with the result
+    });
+    // Listen for "gameStart" events from the server
+    socket.on('gameStart', (result) => {
+        setGameMessage(result); // Update the game message with the result
+    });
     return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement("div", null,
             react_1.default.createElement("p", null, gameMessage),

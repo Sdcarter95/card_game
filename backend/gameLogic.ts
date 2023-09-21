@@ -98,8 +98,3 @@ export async function nextRound(): Promise<string> {
 
 }
 
-// To proceed to the next round, call roundGenerator.next() when needed.
-// Each call to roundGenerator.next() will yield the next message.
-// Example usage:
-// const round1Result = roundGenerator.next();
-// console.log(round1Result.value); // Print the round 1 message

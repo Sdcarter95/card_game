@@ -1,34 +1,40 @@
 import React, { useEffect, useState } from 'react';
-import { newGame, nextRound } from '../server_calls/WarCalls';
+import { io, Socket } from 'socket.io-client';
 
+const socket: Socket = io('http://localhost:3001',  { transports: ['websocket', 'polling', 'flashsocket'] }); // Connect to the WebSocket server
 function HomePage() {
 
     const [gameMessage, setGameMessage] = useState<any>("Ready to play");
 
     useEffect(() => {
-        startGame();
+
+        // Listen for "endGame" event from the server
+        socket.on('endGame', (message: string) => {
+            setGameMessage(message);
+        });
+
+        //startGame();
     }, [])
 
-    const startGame = () => {
-        newGame()
-            .then((response: any) => {
-                setGameMessage(response);
-            })
-            .catch((error: any) => {
-                console.error("Error starting the game:", error);
-                setGameMessage(error);
-            });
-    };
 
     const playRound = () => {
-        nextRound().then((response: any) => {
-            setGameMessage(response);
-        })
-            .catch((error: any) => {
-                console.error("Error playing round:", error);
-                setGameMessage(error);
-            });
+        socket.emit('nextRound');
     };
+
+    // Listen for "waitingForPlayers" event from the server
+    socket.on('waitingForPlayers', (message: string) => {
+        setGameMessage(message); // Display the waiting message
+    });
+
+    // Listen for "roundResult" events from the server
+    socket.on('roundResult', (result: string) => {
+        setGameMessage(result); // Update the game message with the result
+    });
+
+    // Listen for "gameStart" events from the server
+    socket.on('gameStart', (result: string) => {
+        setGameMessage(result); // Update the game message with the result
+    });
 
     return (
         <>
